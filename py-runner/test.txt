@@ -8,3 +8,11 @@ curl -X POST http://127.0.0.1:5000/execute \
 curl -X POST http://127.0.0.1:5000/execute \
 -H "Content-Type: application/json" \
 -d '{"code": "import math\nprint(math.sqrt(-1))"}'
+
+
+#Windows (check from frontend)
+- curl -X POST http://127.0.0.1:5000/execute -H "Content-Type: application/json" -d "{\"code\": \"import math\n\nfor i in range(10):\n    print(i)\"}"
+{"error":"","output":"0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n"}
+
+- curl -X POST http://127.0.0.1:5000/execute -H "Content-Type: application/json" -d "{\"code\": \"print(\\\"Hello, World!\\\")\"}"
+{"error":"","output":"Hello, World!\n"}
