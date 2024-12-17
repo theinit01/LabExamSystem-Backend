@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  python-runner:
+    build:
+      context: ./python-runner  # Path to Python runner Dockerfile
+    container_name: python-runner
+    ports:
+      - "5001:5000"
+    networks:
+      - code-runner-network
+
+  c-runner:
+    build:
+      context: ./c-runner  # Path to C runner Dockerfile
+    container_name: c-runner
+    ports:
+      - "5002:5000"
+    networks:
+      - code-runner-network
+
+  proxy-server:
+    build:
+      context: ./proxy-server  # Path to Proxy server Dockerfile
+    container_name: proxy-server
+    ports:
+      - "8080:8080"  # Proxy server port
+    networks:
+      - code-runner-network
+    depends_on:
+      - python-runner
+      - c-runner
+
+networks:
+  code-runner-network:
+    driver: bridge
