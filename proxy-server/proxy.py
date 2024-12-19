@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 # Mapping of languages to their respective container endpoints
 LANGUAGE_TO_CONTAINER = {
-    "python": "http://python-container:5000/execute",  # Python container endpoint
-    "c": "http://c-container:5000/execute",           # C container endpoint
+    "python": "http://python-runner:5000/execute",  # Python container endpoint
+    "c": "http://c-runner:5000/execute",           # C container endpoint
 }
 
 @app.route('/execute', methods=['POST'])
@@ -36,4 +36,4 @@ def main_server():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)  # Main server runs on port 8000
+    app.run(host="0.0.0.0", port=8080)  # Main server runs on port 8000

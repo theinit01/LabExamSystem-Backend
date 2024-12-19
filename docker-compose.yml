@@ -3,7 +3,7 @@ version: '3.8'
 services:
   python-runner:
     build:
-      context: ./python-runner  # Path to Python runner Dockerfile
+      context: ./py-runner  # Path to Python runner Dockerfile
     container_name: python-runner
     ports:
       - "5001:5000"
