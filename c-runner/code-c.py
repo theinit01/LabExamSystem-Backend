@@ -7,6 +7,9 @@ app = Flask(__name__)
 
 @app.route('/execute', methods=['POST'])
 def execute_c_code():
+    source_file = None
+    binary_file = None
+
     try:
         # Get code from the request
         code = request.json.get('code')
@@ -30,8 +33,7 @@ def execute_c_code():
             text=True,
             timeout=5
         )
-		
-        # If compilation fails, return the error
+
         if compile_process.returncode != 0:
             return jsonify({'error': compile_process.stderr}), 400
 
@@ -44,23 +46,20 @@ def execute_c_code():
             timeout=5
         )
 
-        # Return the output
-        return jsonify({
-            'output': execute_process.stdout,
-            'error': execute_process.stderr
-        })
+        if execute_process.returncode == 0:
+            return jsonify({'output': execute_process.stdout})
+        else:
+            return jsonify({'error': execute_process.stderr})
 
     except subprocess.TimeoutExpired:
         return jsonify({'error': 'Execution timed out'}), 408
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
-        # Cleanup files
-        if os.path.exists(source_file):
+        if source_file and os.path.exists(source_file):
             os.remove(source_file)
-        if os.path.exists(binary_file):
+        if binary_file and os.path.exists(binary_file):
             os.remove(binary_file)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-

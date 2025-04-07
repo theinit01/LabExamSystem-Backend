@@ -7,6 +7,8 @@ app = Flask(__name__)
 
 @app.route('/execute', methods=['POST'])
 def execute_python_code():
+    source_file = None  # Initialize in outer scope for finally block
+
     try:
         code = request.json.get('code')
         if not code:
@@ -27,18 +29,17 @@ def execute_python_code():
             timeout=5
         )
 
-        return jsonify({
-            'output': execute_process.stdout,
-            'error': execute_process.stderr
-        })
+        if execute_process.returncode == 0:
+            return jsonify({'output': execute_process.stdout})
+        else:
+            return jsonify({'error': execute_process.stderr})
 
     except subprocess.TimeoutExpired:
         return jsonify({'error': 'Execution timed out'}), 408
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
-        # Cleanup the Python file
-        if os.path.exists(source_file):
+        if source_file and os.path.exists(source_file):
             os.remove(source_file)
 
 if __name__ == "__main__":

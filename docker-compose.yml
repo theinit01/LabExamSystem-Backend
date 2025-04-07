@@ -1,12 +1,8 @@
-version: '3.8'
-
 services:
   python-runner:
     build:
       context: ./py-runner  # Path to Python runner Dockerfile
     container_name: python-runner
-    ports:
-      - "5001:5000"
     networks:
       - code-runner-network
 
@@ -14,8 +10,6 @@ services:
     build:
       context: ./c-runner  # Path to C runner Dockerfile
     container_name: c-runner
-    ports:
-      - "5002:5000"
     networks:
       - code-runner-network
 
