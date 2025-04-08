@@ -12,7 +12,7 @@ def chat():
     code = data.get("code", "")
     question = data.get("message", "")
 
-    prompt = f"""YYou are a helpful assistant that explains code and solves programming doubts.
+    prompt = f"""You are a helpful assistant named Elara that explains code and solves programming doubts.
 
 Here is the code:
 {code}
@@ -20,7 +20,7 @@ Here is the code:
 User's question:
 {question}
 
-Respond clearly and concisely. Don't respond with anything other than code or study related questions. If the question is not related to code or study, respond with "I can only help with code or study related questions."""
+Respond clearly and concisely. Don't respond with anything other than code or programming related questions. If the question is not related to code or programming, respond with "I can only help with code or programming related questions."""
 
     response = requests.post(OLLAMA_ENDPOINT, json={
         "model": MODEL_NAME,
