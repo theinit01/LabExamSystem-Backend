@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY proxy.py /app/
 
-RUN pip install flask requests
+RUN pip install flask requests flask-cors
 
 EXPOSE 8080
 

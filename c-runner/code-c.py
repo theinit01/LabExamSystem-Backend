@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import subprocess
 import os
 import uuid
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5173"])
 
 @app.route('/execute', methods=['POST'])
 def execute_c_code():
