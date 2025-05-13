@@ -1,29 +1,81 @@
+version: "3.9"
+
 services:
+  wireguard:
+    profiles: ["exam"]
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      - SERVERURL=192.168.1.10    # Your server's LAN IP
+      - SERVERPORT=51820
+      - PEERS=30
+      - PEERDNS=10.13.13.1        # Point DNS to Pi-hole
+      - INTERNAL_SUBNET=10.13.13.0
+    volumes:
+      - wg-config:/config
+      - /lib/modules:/lib/modules
+    network_mode: "host"        # Bind directly to host LAN
+    restart: unless-stopped
+
+  pihole:
+    profiles: ["exam"]
+    image: pihole/pihole:latest
+    container_name: pihole
+    network_mode: "host"        # DNS needs host ports 53
+    environment:
+      TZ: "Asia/Kolkata"
+      WEBPASSWORD: "admin"
+      DNSMASQ_LISTENING: "all"
+    volumes:
+      - pihole_data:/etc/pihole
+      - dnsmasq_data:/etc/dnsmasq.d
+    restart: unless-stopped
+
   python-runner:
     build:
-      context: ./py-runner  # Path to Python runner Dockerfile
+      context: ./py-runner
     container_name: python-runner
     networks:
       - code-runner-network
 
   c-runner:
     build:
-      context: ./c-runner  # Path to C runner Dockerfile
+      context: ./c-runner
     container_name: c-runner
     networks:
       - code-runner-network
 
   proxy-server:
     build:
-      context: ./proxy-server  # Path to Proxy server Dockerfile
+      context: ./proxy-server
     container_name: proxy-server
     ports:
-      - "8080:8080"  # Proxy server port
+      - "8080:8080"
     networks:
       - code-runner-network
     depends_on:
       - python-runner
       - c-runner
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    network_mode: "host"      # use host networking for inference
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  wg-config:
+  pihole_data:
+  dnsmasq_data:
+  ollama_data:
 
 networks:
   code-runner-network:
