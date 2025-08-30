@@ -5,7 +5,9 @@ import os
 import uuid
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+
+# Allow CORS from everywhere
+CORS(app)
 
 @app.route('/execute', methods=['POST'])
 def execute_c_code():
